@@ -34,10 +34,11 @@ esac
 SCRIPTLIB=$(dirname $(readlink -f "$0"))/lib/
 test -d "$SCRIPTLIB"
 
-format='%-2s  %-30s %-30s %-6s %-60s %s\n'
-printf "$format" "St" "Name" "Version" "Arch" "Description" "Licenses"
-printf "$format" "--" "----" "-------" "----" "-----------" "--------"
+format='%-6s  %-30s %-30s %-6s %-60s %s\n'
+printf "$format" "No. " "Name" "Version" "Arch" "Description" "Licenses"
+printf "$format" "----" "----" "-------" "----" "-----------" "--------"
 
+seq=0
 COLUMNS=2000 dpkg -l | grep '^.[iufhwt]' | while read pState package pVer pArch pDesc; do
   license=
   for method in "$SCRIPTLIB"/reader*; do
@@ -51,6 +52,7 @@ COLUMNS=2000 dpkg -l | grep '^.[iufhwt]' | while read pState package pVer pArch 
   done
   [ -n "$license" ] || license='unknown'
 
-  printf "$format" "$pState" "${package:0:30}" "${pVer:0:30}" "${pArch:0:6}" "${pDesc:0:60}" "$license"
+  seq=$((seq + 1))
+  printf "$format" "$seq" "${package:0:30}" "${pVer:0:30}" "${pArch:0:6}" "${pDesc:0:60}" "$license"
 done
 
